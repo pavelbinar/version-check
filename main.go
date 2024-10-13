@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 )
 
@@ -22,9 +23,32 @@ type Config struct {
 	Tools []ToolConfig `yaml:"tools"`
 }
 
+var (
+	cfgFile string
+	rootCmd = &cobra.Command{
+		Use:   "version-checker",
+		Short: "A tool to check versions of installed software",
+		Long: `Version Checker is a CLI tool that checks the versions of installed software
+against expected versions specified in a configuration file.`,
+		Run: runVersionCheck,
+	}
+)
+
+func init() {
+	cobra.OnInitialize(initConfig)
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is ./config.yaml)")
+	rootCmd.Version = "0.1.0"
+}
+
+func initConfig() {
+	if cfgFile == "" {
+		cfgFile = "config.yaml"
+	}
+}
+
 // readConfig reads and parses the config.yaml file.
 func readConfig() (*Config, error) {
-	data, err := os.ReadFile("config.yaml")
+	data, err := os.ReadFile(cfgFile)
 	if err != nil {
 		return nil, err
 	}
@@ -35,20 +59,12 @@ func readConfig() (*Config, error) {
 	return &config, nil
 }
 
-// specialCases defines exceptions for version extraction
-var specialCases = map[string]string{
-	"rsync": `(?:version|protocol)\s+(\d+(?:\.\d+){0,2})`,
-}
-
 // extractVersion extracts the version from the command output.
 func extractVersion(command string, output string) string {
-
 	if strings.Contains(command, "rsync") {
-		// Find the line containing rsync version
 		lines := strings.Split(output, "\n")
 		for _, line := range lines {
 			if strings.Contains(line, "rsync version") {
-				// Use the same regex to parse the version
 				re := regexp.MustCompile(`v?(\d+(\.\d+){0,2})`)
 				match := re.FindString(line)
 				return strings.TrimPrefix(match, "v")
@@ -57,7 +73,6 @@ func extractVersion(command string, output string) string {
 		return ""
 	}
 
-	// Default case for other tools
 	re := regexp.MustCompile(`v?(\d+(\.\d+){0,2})`)
 	match := re.FindString(output)
 	return strings.TrimPrefix(match, "v")
@@ -65,18 +80,15 @@ func extractVersion(command string, output string) string {
 
 // compareVersions compares two version strings.
 func compareVersions(v1, v2 string) bool {
-	// Split versions into parts
 	parts1 := strings.Split(v1, ".")
 	parts2 := strings.Split(v2, ".")
 
-	// Compare each part
 	for i := 0; i < len(parts1) && i < len(parts2); i++ {
 		if parts1[i] != parts2[i] {
 			return false
 		}
 	}
 
-	// If all parts match and lengths are the same, versions are equal
 	return len(parts1) == len(parts2)
 }
 
@@ -104,10 +116,10 @@ func checkVersion(config ToolConfig) bool {
 	}
 }
 
-func main() {
+func runVersionCheck(cmd *cobra.Command, args []string) {
 	config, err := readConfig()
 	if err != nil {
-		fmt.Printf("Failed to read config.yaml: %s\n", err)
+		fmt.Printf("Failed to read config file: %s\n", err)
 		os.Exit(1)
 	}
 
@@ -121,6 +133,13 @@ func main() {
 	if allMatch {
 		fmt.Println("Versions OK")
 	} else {
-		os.Exit(1) // Exit with error status if any version does not match
+		os.Exit(1)
+	}
+}
+
+func main() {
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }
