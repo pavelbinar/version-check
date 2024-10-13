@@ -1,4 +1,4 @@
-module github.com/pavelbinar/beam-transfer/cmd/version-check
+module github.com/pavelbinar/version-check
 
 go 1.23.1
 

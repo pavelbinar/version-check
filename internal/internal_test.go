@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"os"
@@ -55,7 +55,7 @@ tools:
 	}()
 
 	// Run the tests
-	config, err := readConfig()
+	config, err := readTestConfig(originalConfig)
 	if err != nil {
 		t.Fatalf("Failed to read config: %v", err)
 	}
@@ -170,4 +170,9 @@ func TestExtractVersionWithSpecialCase(t *testing.T) {
 			}
 		})
 	}
+}
+
+// Rename this function to avoid conflict
+func readTestConfig(filename string) (*Config, error) {
+	return readConfig(filename)
 }
