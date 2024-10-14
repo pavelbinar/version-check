@@ -1,0 +1,24 @@
+version: "3"
+
+env:
+  GITHUB_TOKEN:
+    sh: op read "op://Private/goreleaser - github token/token"
+
+tasks:
+  default:
+    desc: Runs the release task
+    silent: true
+    cmds:
+      - task: build
+
+  release:
+    desc: Run the release task
+    silent: true
+    cmds:
+      - goreleaser release --clean
+
+  build:
+    desc: Run the bild task
+    silent: true
+    cmds:
+      - goreleaser build --snapshot --clean
