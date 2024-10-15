@@ -36,6 +36,6 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is ./config.yaml)")
-	rootCmd.Version = "0.1.0"
+	rootCmd.Version = "0.2.0"
 
 }
