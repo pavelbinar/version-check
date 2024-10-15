@@ -1,5 +1,9 @@
 # version-check
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/pavelbinar/version-check.svg)](https://pkg.go.dev/github.com/pavelbinar/version-check)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Go Report Card](https://goreportcard.com/badge/github.com/pavelbinar/version-check)](https://goreportcard.com/report/github.com/pavelbinar/version-check)
+
 version-check is a simple tool for comparing version numbers. It's designed to help developers ensure version consistency across different components of their projects.
 
 ## Features
@@ -28,7 +32,7 @@ This will check the versions of all the tools listed in the config.yaml file and
 
 ## Configuration
 
-The config.yaml file is used to specify the versions of the tools you want to check. The file should be in the following format:
+The `config.yaml` file is used to specify the versions of the tools you want to check. The file should be in the following format:
 
 ```yaml
 tools:
