@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	internal "github.com/pavelbinar/version-check/internal"
+	check "github.com/pavelbinar/version-check/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +15,7 @@ var (
 		Long: `Version Checker is a CLI tool that checks the versions of installed software
 against expected versions specified in a configuration file.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			internal.RunVersionCheck(cmd, args, cfgFile)
+			check.RunVersionCheck(cmd, args, cfgFile)
 		},
 	}
 )
